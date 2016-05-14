@@ -17,58 +17,131 @@ public class Config
 
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+	/**
+	 * Gets the configuration from the specified file. If the configuration is
+	 * invalid for some reason, returns a default configuration instead. Sets up
+	 * a shutdown hook to handle saving the configuration out on shutdown.
+	 * 
+	 * @param p
+	 *            the path attempt to load from
+	 * @return the configuration specified, or a default one instead.
+	 */
 	public static Config get(Path p)
 	{
 		Config res = getOrDefFromFile(p);
+		return addExportHook(p, res);
+	}
+
+	private static Config addExportHook(Path p, Config res)
+	{
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			res.exportTo(p);
 		}));
 		return res;
 	}
 
+	/**
+	 * Attempts to load a config from the specified file, handles the various
+	 * problems, returns either the one from the path provided, or a new one.
+	 * 
+	 * @param p
+	 *            the path to load from
+	 * @return the config for that path
+	 */
 	private static Config getOrDefFromFile(Path p)
 	{
 		Config res;
 		try
 		{
-			res = gson.fromJson(new FileReader(p.toFile()), Config.class);
-		} catch (JsonSyntaxException | JsonIOException | FileNotFoundException e)
+			try
+			{
+				res = gson.fromJson(new FileReader(p.toFile()), Config.class);
+			} catch (JsonSyntaxException | JsonIOException | FileNotFoundException e)
+			{
+				U.log("Unable to load config file " + p.toString() + "; using default config.", e);
+				res = new Config();
+			}
+		} catch (Exception e)
 		{
-			U.log("Unable to load config file " + p.toString() + "; using default config.", e);
+			U.e("Invalid config file, unable to load from " + p.toString() + "; overwriting with default config.", e);
 			res = new Config();
 		}
 		return res;
 	}
 
+	/**
+	 * Writes this config to the path provided
+	 * 
+	 * @param p
+	 *            the path to export to
+	 */
 	private void exportTo(Path p)
 	{
 		U.writeToFile(gson.toJson(this), p);
 	}
 
-	private Filter filter;
+	private Filter classFilter;
 
 	/**
 	 * Creates the default config, used only internally if there is an issue
-	 * loading the configuration from the system.
+	 * loading the configuration from the system, or if
+	 * {@link #forceDefault(Path)} is used.
 	 */
 	private Config()
 	{
-		this.filter = Filter.getDefault();
+		this.classFilter = Filter.getDefault();
 	}
 
+	/**
+	 * Returns the configured class filter.
+	 * 
+	 * @return
+	 */
 	public ClassFilter getFilter()
 	{
-		if (filter == null)
-			filter = Filter.getDefault();
-		return filter;
+		if (classFilter == null)
+			classFilter = Filter.getDefault();
+		return classFilter;
 	}
 
+	/**
+	 * Adds a specified class to the filter in the list
+	 * 
+	 * @param clazz
+	 *            the class to add
+	 */
+	public void addClassToFilter(Class<?> clazz)
+	{
+		this.classFilter.addClass(clazz);
+	}
+
+	/**
+	 * Sets the classfilter to a whitelist
+	 */
+	public void setWhiteListClassFilter()
+	{
+		this.classFilter.setToWhiteList();
+	}
+
+	/**
+	 * Sets the classfilter to a blacklist
+	 */
+	public void setBlackListClassFilter()
+	{
+		this.classFilter.setToBlackList();
+	}
+
+	/**
+	 * Loads a default config, setup to save to the specified path, adding a
+	 * shutdown hook for the save in the process.
+	 * 
+	 * @param p
+	 *            the path to export to
+	 * @return a default configuration
+	 */
 	public static Config forceDefault(Path p)
 	{
 		Config res = new Config();
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			res.exportTo(p);
-		}));
-		return res;
+		return addExportHook(p, res);
 	}
 }

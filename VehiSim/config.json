@@ -1,5 +1,5 @@
 {
-  "filter": {
+  "classFilter": {
     "blacklist": false,
     "names": [
       "java.util.HashSet",

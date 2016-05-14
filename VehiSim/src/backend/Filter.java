@@ -22,7 +22,7 @@ public class Filter implements ClassFilter
 		this.names = new HashSet<>();
 	}
 
-	public void setWhiteList()
+	public void setToWhiteList()
 	{
 		this.blacklist = false;
 	}
@@ -49,7 +49,7 @@ public class Filter implements ClassFilter
 	public static Filter getDefault()
 	{
 		Filter filter = new Filter();
-		filter.setWhiteList();
+		filter.setToWhiteList();
 
 		filter.addClass(Set.class);
 		filter.addClass(HashSet.class);
