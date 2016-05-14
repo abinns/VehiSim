@@ -8,6 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Stream;
 
 import jdk.nashorn.api.scripting.ClassFilter;
@@ -34,17 +41,23 @@ public class Filter implements ClassFilter
 
 		filter.addClass(Set.class);
 		filter.addClass(HashSet.class);
+		filter.addClass(TreeSet.class);
+		filter.addClass(ConcurrentSkipListSet.class);
+		filter.addClass(CopyOnWriteArraySet.class);
 
 		filter.addClass(Map.class);
+		filter.addClass(ConcurrentNavigableMap.class);
 		filter.addClass(HashMap.class);
+		filter.addClass(ConcurrentHashMap.class);
 		filter.addClass(TreeMap.class);
+		filter.addClass(ConcurrentSkipListMap.class);
 		filter.addClass(LinkedHashMap.class);
 
 		filter.addClass(List.class);
 		filter.addClass(ArrayList.class);
+		filter.addClass(CopyOnWriteArrayList.class);
 
 		filter.addClass(Math.class);
-
 		filter.addClass(Stream.class);
 
 		return filter;

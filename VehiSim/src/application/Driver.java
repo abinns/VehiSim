@@ -48,8 +48,10 @@ public class Driver
 			if (script.isPresent())
 				script.get().eval(context);
 			context.getBindings(ScriptContext.ENGINE_SCOPE).put("printPi", (Runnable) () -> System.out.println(Math.PI));
+
 			U.p(context.getBindings(ScriptContext.ENGINE_SCOPE).entrySet());
 			U.p(((ScriptObjectMirror) context.getBindings(ScriptContext.ENGINE_SCOPE).get("nashorn.global")).entrySet());
+
 			engine.eval("doTick(); printPi(); tank.thing()", context);
 		} catch (ScriptException e)
 		{
