@@ -12,6 +12,12 @@ import com.google.gson.JsonSyntaxException;
 import jdk.nashorn.api.scripting.ClassFilter;
 import util.U;
 
+/**
+ * Centralized, self-saving configuration class, handles saving
+ * application-configuration state between application runs.
+ * 
+ * @author Sudo
+ */
 public class Config
 {
 
@@ -32,12 +38,22 @@ public class Config
 		return addExportHook(p, res);
 	}
 
-	private static Config addExportHook(Path p, Config res)
+	/**
+	 * Returns the configuration passed, adds a shutdown hook to the runtime to
+	 * export the config on JVM shutdown.
+	 * 
+	 * @param p
+	 *            the path to export to
+	 * @param config
+	 *            the config to save out
+	 * @return the config passed
+	 */
+	private static Config addExportHook(Path p, Config config)
 	{
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			res.exportTo(p);
+			config.exportTo(p);
 		}));
-		return res;
+		return config;
 	}
 
 	/**
@@ -102,33 +118,6 @@ public class Config
 		if (classFilter == null)
 			classFilter = Filter.getDefault();
 		return classFilter;
-	}
-
-	/**
-	 * Adds a specified class to the filter in the list
-	 * 
-	 * @param clazz
-	 *            the class to add
-	 */
-	public void addClassToFilter(Class<?> clazz)
-	{
-		this.classFilter.addClass(clazz);
-	}
-
-	/**
-	 * Sets the classfilter to a whitelist
-	 */
-	public void setWhiteListClassFilter()
-	{
-		this.classFilter.setToWhiteList();
-	}
-
-	/**
-	 * Sets the classfilter to a blacklist
-	 */
-	public void setBlackListClassFilter()
-	{
-		this.classFilter.setToBlackList();
 	}
 
 	/**
