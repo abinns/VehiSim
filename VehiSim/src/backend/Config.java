@@ -23,21 +23,6 @@ public class Config
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	/**
-	 * Gets the configuration from the specified file. If the configuration is
-	 * invalid for some reason, returns a default configuration instead. Sets up
-	 * a shutdown hook to handle saving the configuration out on shutdown.
-	 * 
-	 * @param p
-	 *            the path attempt to load from
-	 * @return the configuration specified, or a default one instead.
-	 */
-	public static Config get(Path p)
-	{
-		Config res = getOrDefFromFile(p);
-		return addExportHook(p, res);
-	}
-
-	/**
 	 * Returns the configuration passed, adds a shutdown hook to the runtime to
 	 * export the config on JVM shutdown.
 	 * 
@@ -56,6 +41,35 @@ public class Config
 	}
 
 	/**
+	 * Loads a default config, setup to save to the specified path, adding a
+	 * shutdown hook for the save in the process.
+	 * 
+	 * @param p
+	 *            the path to export to
+	 * @return a default configuration
+	 */
+	public static Config forceDefault(Path p)
+	{
+		Config res = new Config();
+		return Config.addExportHook(p, res);
+	}
+
+	/**
+	 * Gets the configuration from the specified file. If the configuration is
+	 * invalid for some reason, returns a default configuration instead. Sets up
+	 * a shutdown hook to handle saving the configuration out on shutdown.
+	 * 
+	 * @param p
+	 *            the path attempt to load from
+	 * @return the configuration specified, or a default one instead.
+	 */
+	public static Config get(Path p)
+	{
+		Config res = Config.getOrDefFromFile(p);
+		return Config.addExportHook(p, res);
+	}
+
+	/**
 	 * Attempts to load a config from the specified file, handles the various
 	 * problems, returns either the one from the path provided, or a new one.
 	 * 
@@ -70,7 +84,7 @@ public class Config
 		{
 			try
 			{
-				res = gson.fromJson(new FileReader(p.toFile()), Config.class);
+				res = Config.gson.fromJson(new FileReader(p.toFile()), Config.class);
 			} catch (JsonSyntaxException | JsonIOException | FileNotFoundException e)
 			{
 				U.log("Unable to load config file " + p.toString() + "; using default config.", e);
@@ -82,17 +96,6 @@ public class Config
 			res = new Config();
 		}
 		return res;
-	}
-
-	/**
-	 * Writes this config to the path provided
-	 * 
-	 * @param p
-	 *            the path to export to
-	 */
-	private void exportTo(Path p)
-	{
-		U.writeToFile(gson.toJson(this), p);
 	}
 
 	private Filter classFilter;
@@ -108,28 +111,25 @@ public class Config
 	}
 
 	/**
+	 * Writes this config to the path provided
+	 * 
+	 * @param p
+	 *            the path to export to
+	 */
+	private void exportTo(Path p)
+	{
+		U.writeToFile(Config.gson.toJson(this), p);
+	}
+
+	/**
 	 * Returns the configured class filter.
 	 * 
 	 * @return
 	 */
 	public ClassFilter getFilter()
 	{
-		if (classFilter == null)
-			classFilter = Filter.getDefault();
-		return classFilter;
-	}
-
-	/**
-	 * Loads a default config, setup to save to the specified path, adding a
-	 * shutdown hook for the save in the process.
-	 * 
-	 * @param p
-	 *            the path to export to
-	 * @return a default configuration
-	 */
-	public static Config forceDefault(Path p)
-	{
-		Config res = new Config();
-		return addExportHook(p, res);
+		if (this.classFilter == null)
+			this.classFilter = Filter.getDefault();
+		return this.classFilter;
 	}
 }

@@ -1,4 +1,5 @@
 package application;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Path;
@@ -19,6 +20,18 @@ import util.U;
 
 public class Driver
 {
+	public static Optional<CompiledScript> compile(Path file, ScriptEngine engine)
+	{
+		try
+		{
+			return Optional.of(((Compilable) engine).compile(new FileReader(file.toFile())));
+		} catch (FileNotFoundException | ScriptException e)
+		{
+			U.e("Could not compile " + file, e);
+			return Optional.empty();
+		}
+	}
+
 	public static void main(String... cheese)
 	{
 		// To be replaced with .get(...) when the default config is fleshed out
@@ -27,7 +40,7 @@ public class Driver
 
 		NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
 		ScriptEngine engine = factory.getScriptEngine(conf.getFilter());
-		Optional<CompiledScript> script = compile(Paths.get(".").resolve("testTank.js"), engine);
+		Optional<CompiledScript> script = Driver.compile(Paths.get(".").resolve("testTank.js"), engine);
 
 		ScriptContext context = new SimpleScriptContext();
 		try
@@ -44,17 +57,5 @@ public class Driver
 			e.printStackTrace();
 		}
 
-	}
-
-	public static Optional<CompiledScript> compile(Path file, ScriptEngine engine)
-	{
-		try
-		{
-			return Optional.of(((Compilable) engine).compile(new FileReader(file.toFile())));
-		} catch (FileNotFoundException | ScriptException e)
-		{
-			U.e("Could not compile " + file, e);
-			return Optional.empty();
-		}
 	}
 }

@@ -21,91 +21,6 @@ import jdk.nashorn.api.scripting.ClassFilter;
  */
 public class Filter implements ClassFilter
 {
-	private boolean		blacklist;
-	private Set<String>	names;
-
-	/**
-	 * Used only internally.
-	 */
-	private Filter()
-	{
-		blacklist = false;
-		this.names = new HashSet<>();
-	}
-
-	/**
-	 * Sets this filter to behave as a whitelist
-	 */
-	public void setToWhiteList()
-	{
-		this.blacklist = false;
-	}
-
-	/**
-	 * Sets this filter to behave as a blacklist
-	 */
-	public void setToBlackList()
-	{
-		this.blacklist = true;
-	}
-
-	/**
-	 * Adds the specified class to the filter.
-	 * 
-	 * @param clazz
-	 *            the class to add to the filter
-	 */
-	public void addClass(Class<?> clazz)
-	{
-		names.add(clazz.getName());
-	}
-
-	/**
-	 * Removes the given class from the allowed classes.
-	 * 
-	 * @param clazz
-	 *            the class to remove.
-	 */
-	public void removeClass(Class<?> clazz)
-	{
-		names.remove(clazz.getName());
-	}
-
-	/**
-	 * Determines whether the specified classname should be allowed to be used
-	 * by the script. Always allows anything in the sim.api.* classes and
-	 * packages.
-	 */
-	@Override
-	public boolean exposeToScripts(String classname)
-	{
-		/*
-		 * @formatter:off
-		 * | Present in Set |  Whitelist/Blacklist   | --Exposed?-- |
-		 * |     TRUE       |     Blacklist (T)      |    FALSE     |
-		 * |     TRUE       |     Whitelist (F)      |    TRUE      |
-		 * |     FALSE      |     Blacklist (T)      |    TRUE      |
-		 * |     FALSE      |     Whitelist (F)      |    FALSE     |
-		 * @formatter:on
-		 *  results in XOR being the perfect match. For once. *hue hue hue*
-		 */
-		if (classname.startsWith("sim.api."))
-			return true;
-		if (names.contains(classname) ^ blacklist)
-			return true;
-		return false;
-	}
-
-	/**
-	 * Returns an empty, whitelisted filter.
-	 * 
-	 * @return an empty whitelist filter
-	 */
-	public static Filter getEmpty()
-	{
-		return new Filter();
-	}
-
 	/**
 	 * Returns a normal whitelist filter, with some normal useful java classes
 	 * whitelisted by default.
@@ -133,5 +48,91 @@ public class Filter implements ClassFilter
 		filter.addClass(Stream.class);
 
 		return filter;
+	}
+
+	/**
+	 * Returns an empty, whitelisted filter.
+	 * 
+	 * @return an empty whitelist filter
+	 */
+	public static Filter getEmpty()
+	{
+		return new Filter();
+	}
+
+	private boolean blacklist;
+
+	private Set<String> names;
+
+	/**
+	 * Used only internally.
+	 */
+	private Filter()
+	{
+		this.blacklist = false;
+		this.names = new HashSet<>();
+	}
+
+	/**
+	 * Adds the specified class to the filter.
+	 * 
+	 * @param clazz
+	 *            the class to add to the filter
+	 */
+	public void addClass(Class<?> clazz)
+	{
+		this.names.add(clazz.getName());
+	}
+
+	/**
+	 * Determines whether the specified classname should be allowed to be used
+	 * by the script. Always allows anything in the sim.api.* classes and
+	 * packages.
+	 */
+	@Override
+	public boolean exposeToScripts(String classname)
+	{
+		/*
+		 * @formatter:off
+		 * | Present in Set |  Whitelist/Blacklist   | --Exposed?-- |
+		 * |     TRUE       |     Blacklist (T)      |    FALSE     |
+		 * |     TRUE       |     Whitelist (F)      |    TRUE      |
+		 * |     FALSE      |     Blacklist (T)      |    TRUE      |
+		 * |     FALSE      |     Whitelist (F)      |    FALSE     |
+		 * @formatter:on
+		 *  results in XOR being the perfect match. For once. *hue hue hue*
+		 */
+		if (classname.startsWith("sim.api."))
+			return true;
+		if (this.names.contains(classname) ^ this.blacklist)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Removes the given class from the allowed classes.
+	 * 
+	 * @param clazz
+	 *            the class to remove.
+	 */
+	public void removeClass(Class<?> clazz)
+	{
+		this.names.remove(clazz.getName());
+	}
+
+	/**
+	 * Sets this filter to behave as a blacklist
+	 */
+	public void setToBlackList()
+	{
+		this.blacklist = true;
+	}
+
+	/**
+	 * Sets this filter to behave as a whitelist
+	 */
+	public void setToWhiteList()
+	{
+		this.blacklist = false;
 	}
 }
