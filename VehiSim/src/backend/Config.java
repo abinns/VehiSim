@@ -20,7 +20,6 @@ import util.U;
  */
 public class Config
 {
-
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	/**
