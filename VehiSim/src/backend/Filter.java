@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import jdk.nashorn.api.scripting.ClassFilter;
 
 /**
  * Nicely importable/exportable classfilter, allows for allowing classes by
- * their .class as opposed to requiring a string parameter.
+ * their .class as opposed to requiring a string parameter. Always allows
+ * classes in the sim.api.* packages and sub-packages.
  * 
  * @author Sudo
  */
@@ -71,7 +73,8 @@ public class Filter implements ClassFilter
 
 	/**
 	 * Determines whether the specified classname should be allowed to be used
-	 * by the script.
+	 * by the script. Always allows anything in the sim.api.* classes and
+	 * packages.
 	 */
 	@Override
 	public boolean exposeToScripts(String classname)
@@ -86,6 +89,8 @@ public class Filter implements ClassFilter
 		 * @formatter:on
 		 *  results in XOR being the perfect match. For once. *hue hue hue*
 		 */
+		if (classname.startsWith("sim.api."))
+			return true;
 		if (names.contains(classname) ^ blacklist)
 			return true;
 		return false;
@@ -122,6 +127,10 @@ public class Filter implements ClassFilter
 
 		filter.addClass(List.class);
 		filter.addClass(ArrayList.class);
+
+		filter.addClass(Math.class);
+
+		filter.addClass(Stream.class);
 
 		return filter;
 	}
