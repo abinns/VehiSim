@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<eclipse-userlibraries version="2">
+    <library name="gson" systemlibrary="false">
+        <archive javadoc="jar:platform:/resource/Backend/lib/gson/gson-2.6.2-javadoc.jar!/" path="/Backend/lib/gson/gson-2.6.2.jar" source="/Backend/lib/gson/gson-2.6.2-sources.jar"/>
+    </library>
+</eclipse-userlibraries>
