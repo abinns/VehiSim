@@ -1,0 +1,15 @@
+{
+  "filter": {
+    "blacklist": false,
+    "names": [
+      "java.util.HashSet",
+      "java.util.LinkedHashMap",
+      "java.util.List",
+      "java.util.TreeMap",
+      "java.util.Map",
+      "java.util.Set",
+      "java.util.HashMap",
+      "java.util.ArrayList"
+    ]
+  }
+}
