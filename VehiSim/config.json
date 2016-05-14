@@ -5,9 +5,11 @@
       "java.util.HashSet",
       "java.util.LinkedHashMap",
       "java.util.List",
+      "java.util.stream.Stream",
       "java.util.TreeMap",
       "java.util.Map",
       "java.util.Set",
+      "java.lang.Math",
       "java.util.HashMap",
       "java.util.ArrayList"
     ]
