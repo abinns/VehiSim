@@ -43,6 +43,7 @@ public class Driver
 		Optional<CompiledScript> script = Driver.compile(Paths.get(".").resolve("testTank.js"), engine);
 
 		ScriptContext context = new SimpleScriptContext();
+
 		try
 		{
 			if (script.isPresent())
