@@ -2,16 +2,23 @@
   "classFilter": {
     "blacklist": false,
     "names": [
+      "java.util.concurrent.ConcurrentNavigableMap",
+      "java.util.concurrent.ConcurrentHashMap",
+      "java.util.Set",
+      "java.util.HashMap",
+      "java.util.concurrent.CopyOnWriteArraySet",
+      "java.util.TreeSet",
+      "java.util.ArrayList",
       "java.util.HashSet",
       "java.util.LinkedHashMap",
+      "java.util.concurrent.ConcurrentSkipListMap",
       "java.util.List",
       "java.util.stream.Stream",
+      "java.util.concurrent.ConcurrentSkipListSet",
       "java.util.TreeMap",
       "java.util.Map",
-      "java.util.Set",
       "java.lang.Math",
-      "java.util.HashMap",
-      "java.util.ArrayList"
+      "java.util.concurrent.CopyOnWriteArrayList"
     ]
   }
 }

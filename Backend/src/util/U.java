@@ -1,11 +1,24 @@
 package util;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class U
 {
+
+	private static final PrintStream out;
+
+	static
+	{
+		out = System.err;
+	}
+
 	private static String addErrTxt(String txt, Throwable t)
 	{
 		if (t == null)
@@ -42,12 +55,15 @@ public class U
 		U.printWithTag("OUTPUT", string);
 	}
 
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMM dd hh:mm:ss.SSS a").withZone(ZoneId.systemDefault()).withLocale(Locale.getDefault());
+
 	private static void printWithTag(String tag, String message)
 	{
 		StringBuilder s = new StringBuilder();
+		s.append("[").append(formatter.format(Instant.now())).append("]");
 		s.append("[").append(tag).append("]");
 		s.append(message);
-		System.err.println(s.toString());
+		U.out.println(s.toString());
 	}
 
 	private static void w(String txt, Throwable t)
